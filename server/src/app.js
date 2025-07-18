@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import jobRoutes from "./controllers/job.controller.js";
+import logRoutes from "./controllers/log.controller.js";
 
 const app = express();
 
@@ -10,6 +11,7 @@ app.use(cors({
   methods: ["GET", "POST"],
 }));
 app.use("/api/jobs", jobRoutes);
+app.use('/api/logs', logRoutes);
 
 // Test Route
 app.get("/", (req, res) => {

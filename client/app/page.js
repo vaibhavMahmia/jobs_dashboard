@@ -1,24 +1,25 @@
-import { fetchJobs } from "@/lib/api";
-import { JobCard } from "@/components/JobCard";
+import { JobList } from "@/components/JobList";
+import { LogsTable } from "@/components/LogsTable";
+
+const getData = async (endpoint) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`, {
+    cache: "no-store",
+  });
+  return res.json();
+}
 
 const Home = async () => {
-  const jobs = await fetchJobs();
+  const [jobs, logs] = await Promise.all([
+    getData("/api/jobs/fetch"),
+    getData("/api/logs/fetch"),
+  ]);
 
-  return <main className="p-6 space-y-4">
-    <h1 className="text-2xl font-bold text-center text-teal-700 
-      backdrop-blur-md bg-[#fff9f93a] rounded-md px-6 py-4 shadow-lg">
-      Jobs Dashboard
-    </h1>
-    <div className="grid gap-4">
-      {jobs.length === 0 ? (
-        <div className="text-center text-gray-800 text-lg py-8">
-          No jobs found.
-        </div>
-      ) : (
-        jobs.map((job) => (
-          <JobCard key={job.guid} job={job} />
-        ))
-      )}
+  return <main className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 h-[calc(100vh-4rem)]">
+    <div className="overflow-y-auto pr-2 custom-scroll">
+      <JobList jobs={jobs} />
+    </div>
+    <div className="overflow-y-auto pl-2 custom-scroll">
+      <LogsTable logs={logs} />
     </div>
   </main>;
 }
